@@ -19,3 +19,10 @@ class Board:
 
     def __setitem__(self, key: tuple, value):
         self.__board[key[0]][key[1]] = value
+
+    def __eq__(self, other):
+        for row in range(4):
+            for column in range(4):
+                if self.__board[row][column] != other[(row,column)]:
+                    return False
+        return True

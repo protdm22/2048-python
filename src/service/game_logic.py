@@ -32,45 +32,51 @@ class GameLogic:
                     empty_fields.append((row, column))
         self.__board[empty_fields[randint(0, len(empty_fields) - 1)]] = Next.next_value()
 
+    @staticmethod
+    def get_next_state(non_zero):
+        result = []
+        for i in range(len(non_zero) - 1):
+            if non_zero[i] == non_zero[i + 1]:
+                result.append(non_zero[i] * 2)
+                i += 1
+            else:
+                result.append(non_zero[i])
+        if len(non_zero) == 1:
+            result.append(non_zero[0])
+        else:
+            if non_zero[len(non_zero) - 1] != non_zero[len(non_zero) - 2]:
+                result.append(non_zero[len(non_zero) - 1])
+        return result
+
+    def enter_next_state(self, next_state):
+        changed = True
+        if self.__board == next_state:
+            changed = False
+        self.__board = copy.deepcopy(next_state)
+        if changed:
+            self.__next_appearance()
+
     def move_up(self):
+        next_state = Board()
         for column in range(4):
             non_zero = []
             for row in range(4):
                 if self.__board[(row, column)] != 0:
                     non_zero.append(self.__board[(row, column)])
-            for row in range(4):
-                if row < len(non_zero):
-                    self.__board[(row, column)] = non_zero[row]
-                else:
-                    self.__board[(row, column)] = 0
-
-        print(self.__board)
-        next_state = Board()
-
-        for column in range(4):
-            row = 0
-            new_column = []
-            while row < 3:
-                if self.__board[(row, column)] == self.__board[(row + 1, column)]:
-                    new_column.append(self.__board[(row, column)] * 2)
-                    row += 2
-                else:
-                    new_column.append(self.__board[(row, column)])
-                    row += 1
-            if self.__board[(3, column)] != 0 and self.__board[(3, column)] != self.__board[(2, column)]:
-                new_column.append(self.__board[(3, column)])
-
-            for new_field in range(len(new_column)):
-                next_state[(new_field, column)] = new_column[new_field]
-
-        self.__board = copy.deepcopy(next_state)
-        self.__next_appearance()
+            if len(non_zero) != 0:
+                result = self.get_next_state(non_zero)
+                for row in range(len(result)):
+                    next_state[(row, column)] = result[row]
+        self.enter_next_state(next_state)
 
     def move_right(self):
         pass
+        # TODO
 
     def move_down(self):
         pass
+        # TODO
 
     def move_left(self):
         pass
+        # TODO
